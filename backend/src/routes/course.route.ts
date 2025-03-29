@@ -7,11 +7,11 @@ import { adminMiddleware } from "../middleware/middleware";
 import { courseCreateZod, updateCourseZod} from "../utils/zod";
 
 const app = express();
-const courseRouter = Router();
+const courseRoute = Router();
 const client = new PrismaClient();
 app.use(express.json())
 
-courseRouter.post("/create", adminMiddleware, async(req,res) => {
+courseRoute.post("/create", adminMiddleware, async(req, res) => {
     try{
         const{name, description, price , courseContent} = req.body;
         const zodParse = courseCreateZod.safeParse(req.body);
@@ -34,7 +34,7 @@ courseRouter.post("/create", adminMiddleware, async(req,res) => {
     }
 })
 
-courseRouter.put("/update", adminMiddleware, async(req,res) => {
+courseRoute.put("/update", adminMiddleware, async(req, res) => {
     try{
         const {id ,name, description, price , courseContent } = req.body;
         const zodParse = updateCourseZod.safeParse(req.body);
@@ -65,7 +65,7 @@ courseRouter.put("/update", adminMiddleware, async(req,res) => {
     }
 })
 
-courseRouter.delete("/delete/:id", adminMiddleware, async(req,res) => {
+courseRoute.delete("/delete/:id", adminMiddleware, async(req, res) => {
     try{
         const id = parseInt(req.params.id)
         //@ts-ignore
@@ -88,7 +88,7 @@ courseRouter.delete("/delete/:id", adminMiddleware, async(req,res) => {
     }
 })
 
-courseRouter.get("/viewAll", async(req,res) => {
+courseRoute.get("/viewAll", async(req, res) => {
     try{
         const courses = await client.course.findMany();
         if(!courses){
@@ -103,7 +103,7 @@ courseRouter.get("/viewAll", async(req,res) => {
     }
 })
 
-courseRouter.get("/view/:admin", async(req,res) => {
+courseRoute.get("/view/:admin", async(req, res) => {
     try{
         const admin = req.params.admin;
         const courses = await client.admin.findUnique({
@@ -122,7 +122,7 @@ courseRouter.get("/view/:admin", async(req,res) => {
     }
 })
 
-courseRouter.get("/view/:id",async(req,res) => {
+courseRoute.get("/view/:id",async(req, res) => {
     try{
         const id = parseInt(req.params.id);
         const content = await client.course.findFirst({
@@ -140,4 +140,4 @@ courseRouter.get("/view/:id",async(req,res) => {
     }
 })
 
-export default courseRouter
+export default courseRoute
