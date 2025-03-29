@@ -31,7 +31,7 @@ userRouter.post("/signup", async(req,res) => {
         await client.user.create({
             data:{
                 username: username,
-                password: password
+                password: passwordHash
             }
         })
         res.json({message:"user created successfully"})
@@ -52,22 +52,22 @@ userRouter.post("/signin", async(req,res) => {
         }
         const userCheck = await client.user.findFirst({
             where: {username: username}
-        })
+        });
         if(!userCheck){
             res.status(403).json({message:"this user does not exist"});
             return
         }
         const passwordDecrypt = await bcrypt.compare(password, userCheck.password);
         if(!passwordDecrypt){
-            res.status(403).json({message:"your password is incorrect"})
+            res.status(403).json({message:"this password is incorrect"});
             return
         }
         const token = jwt.sign({userId: userCheck.id}, JWT_SECRET);
-        res.json(token);
+        res.json({token: token});
     }
     catch(error){
         console.log(error);
-        res.status(500).json({message:"server crashed in user signin endpoint"})
+        res.status(500).json({message:"server crash in admin signin endpoint"})
     }
 })
 
